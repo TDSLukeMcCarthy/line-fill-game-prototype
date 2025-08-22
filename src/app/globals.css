@@ -67,8 +67,6 @@ body {
   user-drag: none;
 }
 
-
-
 /* Tile scale pulse animation - scales up then back down */
 @keyframes tilePulse {
   0% {
@@ -89,5 +87,48 @@ body {
 /* Subtle glow effect for visited tiles */
 .tile-visited {
   box-shadow: 0 0 8px var(--tile-glow-color, rgba(59, 130, 246, 0.3));
+}
+
+/* Portal entrance glow animation */
+@keyframes portalEntranceGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px #3B82F6, inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(255,255,255,0.1), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px #3B82F6, inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(255,255,255,0.1), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Portal exit glow animation */
+@keyframes portalExitGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px #10B981, inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(255,255,255,0.1), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px #10B981, inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(255,255,255,0.1), 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Portal entrance and exit animations */
+.portal-entrance {
+  animation: portalEntranceGlow 2s ease-in-out infinite;
+}
+
+.portal-exit {
+  animation: portalExitGlow 2s ease-in-out infinite;
+}
+
+/* Portal icon rotation animation */
+@keyframes portalIconRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.portal-icon {
+  animation: portalIconRotate 3s linear infinite;
 }
 

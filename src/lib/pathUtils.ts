@@ -1,9 +1,59 @@
-import { Coord, Level } from '../types/game';
+import { Coord, Level, Tile, Portal } from '../types/game';
+import { gameFeatures } from '../config/gameConfig';
 
 export function isAdjacent(a: Coord, b: Coord): boolean {
   const dx = Math.abs(a.x - b.x);
   const dy = Math.abs(a.y - b.y);
   return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
+}
+
+export function canTeleport(from: Coord, to: Coord, grid: Tile[][], portals: Portal[]): boolean {
+  if (!gameFeatures.portalsEnabled || !portals) return false;
+  
+  const fromTile = grid[from.y]?.[from.x];
+  const toTile = grid[to.y]?.[to.x];
+  
+  if (!fromTile?.isPortalEntrance || !toTile?.isPortalExit) return false;
+  
+  // Check if they have the same portal ID
+  return fromTile.portalId === toTile.portalId;
+}
+
+export function getPortalDestination(from: Coord, grid: Tile[][], portals: Portal[]): Coord | null {
+  if (!gameFeatures.portalsEnabled || !portals) return null;
+  
+  const fromTile = grid[from.y]?.[from.x];
+  if (!fromTile?.isPortalEntrance) return null;
+  
+  const portal = portals.find(p => p.id === fromTile.portalId);
+  return portal ? portal.exit : null;
+}
+
+export function validatePortalPlacement(entrance: Coord, exit: Coord, grid: Tile[][], portals: Portal[]): boolean {
+  if (!gameFeatures.portalsEnabled) return true;
+  
+  // Check if positions are valid
+  if (!grid[entrance.y]?.[entrance.x]?.isActive || !grid[exit.y]?.[exit.x]?.isActive) {
+    return false;
+  }
+  
+  // Check if positions are not start tiles
+  if (grid[entrance.y][entrance.x].isStart || grid[exit.y][exit.x].isStart) {
+    return false;
+  }
+  
+  // Check if positions are not already portals
+  if (grid[entrance.y][entrance.x].isPortalEntrance || grid[entrance.y][entrance.x].isPortalExit ||
+      grid[exit.y][exit.x].isPortalEntrance || grid[exit.y][exit.x].isPortalExit) {
+    return false;
+  }
+  
+  // Check if positions are not adjacent
+  if (isAdjacent(entrance, exit)) {
+    return false;
+  }
+  
+  return true;
 }
 
 export function generateLevel(levelNumber: number): Level {

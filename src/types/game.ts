@@ -4,6 +4,15 @@ export interface Tile {
   isActive: boolean;
   isStart: boolean;
   visited: boolean;
+  portalId?: number;  // shared ID between entrance and exit
+  isPortalEntrance?: boolean;
+  isPortalExit?: boolean;
+}
+
+export interface Portal {
+  id: number;
+  entrance: Coord;
+  exit: Coord;
 }
 
 export interface GameState {
@@ -14,6 +23,7 @@ export interface GameState {
   level: number;
   isDragging: boolean;
   winningPath?: Coord[]; // Optional winning path for debug purposes
+  portals?: Portal[]; // Array of portal pairs
 }
 
 export interface Coord {
@@ -26,4 +36,5 @@ export interface Level {
   grid: boolean[][];
   startPosition: Coord;
   description?: string;
+  portals?: Portal[]; // Add portals to level definition
 }

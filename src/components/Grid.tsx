@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tile as TileType } from '../types/game';
+import { Tile as TileType, Portal } from '../types/game';
 import Tile from './Tile';
 import PathLine from './PathLine';
 import DebugPath from './DebugPath';
@@ -10,6 +10,7 @@ interface GridProps {
   currentColor: string;
   winningPath?: { x: number; y: number }[];
   showDebug: boolean;
+  portals?: Portal[];
   onMouseDown: (x: number, y: number) => void;
   onMouseEnter: (x: number, y: number) => void;
   onTouchStart: (x: number, y: number) => void;
@@ -22,6 +23,7 @@ export default function Grid({
   currentColor,
   winningPath,
   showDebug,
+  portals = [],
   onMouseDown, 
   onMouseEnter, 
   onTouchStart, 
@@ -64,6 +66,7 @@ export default function Grid({
         currentColor={currentColor}
         tileSize={tileSize}
         gap={4} // gap-1 = 4px
+        portals={portals}
       />
       
       {/* Debug path overlay */}

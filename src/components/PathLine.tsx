@@ -6,9 +6,10 @@ interface PathLineProps {
   currentColor: string;
   tileSize: number;
   gap: number;
+  portals?: Array<{ entrance: Coord; exit: Coord }>;
 }
 
-export default function PathLine({ path, currentColor, tileSize, gap }: PathLineProps) {
+export default function PathLine({ path, currentColor, tileSize, gap, portals = [] }: PathLineProps) {
   if (path.length < 2) return null;
 
   // Function to create a vibrant dark version of the color for the line
@@ -42,12 +43,28 @@ export default function PathLine({ path, currentColor, tileSize, gap }: PathLine
     const y1 = gridPadding + firstPoint.y * (tileSize + gap) + tileSize / 2;
     pathData.push(`M ${x1} ${y1}`);
     
-    // Add lines to all subsequent points
+    // Add lines to all subsequent points, but skip lines between portal entrances and exits
     for (let i = 1; i < path.length; i++) {
+      const previous = path[i - 1];
       const current = path[i];
-      const x = gridPadding + current.x * (tileSize + gap) + tileSize / 2;
-      const y = gridPadding + current.y * (tileSize + gap) + tileSize / 2;
-      pathData.push(`L ${x} ${y}`);
+      
+      // Check if this is a portal teleport (entrance followed by exit)
+      const isPortalTeleport = portals.some(portal => 
+        (portal.entrance.x === previous.x && portal.entrance.y === previous.y) &&
+        (portal.exit.x === current.x && portal.exit.y === current.y)
+      );
+      
+      // If this is a portal teleport, move to the exit without drawing a line
+      if (isPortalTeleport) {
+        const x = gridPadding + current.x * (tileSize + gap) + tileSize / 2;
+        const y = gridPadding + current.y * (tileSize + gap) + tileSize / 2;
+        pathData.push(`M ${x} ${y}`); // Move to exit (no line)
+      } else {
+        // Normal path continuation - draw a line
+        const x = gridPadding + current.x * (tileSize + gap) + tileSize / 2;
+        const y = gridPadding + current.y * (tileSize + gap) + tileSize / 2;
+        pathData.push(`L ${x} ${y}`);
+      }
     }
     
     const result = pathData.join(' ');

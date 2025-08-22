@@ -18,7 +18,7 @@ export default function Tile({
   onTouchStart, 
   onTouchMove 
 }: TileProps) {
-  const { x, y, isActive, isStart, visited } = tile;
+  const { x, y, isActive, isStart, visited, isPortalEntrance, isPortalExit, portalId } = tile;
   const [isPulsing, setIsPulsing] = useState(false);
 
   // Trigger neon pulse effect when tile becomes visited (but not on start tile)
@@ -76,6 +76,22 @@ export default function Tile({
     };
   };
 
+  const getPortalStyle = () => {
+    if (isPortalEntrance) {
+      return {
+        border: '3px solid #3B82F6', // Blue border for entrance
+      };
+    }
+    
+    if (isPortalExit) {
+      return {
+        border: '3px solid #10B981', // Green border for exit
+      };
+    }
+    
+    return {};
+  };
+
   // Determine if this tile can be interacted with
   const canInteract = isStart || (isActive && !visited);
   const cursorClass = canInteract ? 'cursor-pointer' : 'cursor-default';
@@ -119,9 +135,10 @@ export default function Tile({
 
   return (
     <div
-      className={`w-12 h-12 md:w-20 md:h-20 border-2 rounded-xl transition-all duration-200 ${hoverClass} no-select ${cursorClass} ${isPulsing ? 'animate-tile-pulse' : ''} ${visited ? 'tile-visited' : ''} relative`}
+      className={`w-12 h-12 md:w-20 md:h-20 border-2 rounded-xl transition-all duration-200 ${hoverClass} no-select ${cursorClass} ${isPulsing ? 'animate-tile-pulse' : ''} ${visited ? 'tile-visited' : ''} ${isPortalEntrance ? 'portal-entrance' : ''} ${isPortalExit ? 'portal-exit' : ''} relative`}
       style={{
         ...getTileStyle(),
+        ...getPortalStyle(),
         gridColumn: x + 1,
         gridRow: y + 1,
         ...(visited && { '--tile-glow-color': `${currentColor}40` }),
@@ -141,6 +158,25 @@ export default function Tile({
             className="w-3 h-3 md:w-10 md:h-10 bg-white border-4 rounded-full"
             style={{ borderColor: getLineColor(currentColor) }}
           ></div>
+        </div>
+      )}
+      
+      {/* Portal indicators */}
+      {isPortalEntrance && (
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{ zIndex: 15 }}
+        >
+          <div className="text-blue-500 text-xs md:text-sm font-bold portal-icon">🌀</div>
+        </div>
+      )}
+      
+      {isPortalExit && (
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{ zIndex: 15 }}
+        >
+          <div className="text-green-500 text-xs md:text-sm font-bold portal-icon">✨</div>
         </div>
       )}
     </div>
