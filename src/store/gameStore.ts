@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { GameState, Tile } from '../types/game';
-import { generateLevel, isAdjacent } from '../lib/pathUtils';
+import { GameState } from '../types/game';
+import { generateLevel, isAdjacent } from '../lib/levels/generator';
 
 const COLORS = ['#00BFFF', '#FF69B4', '#FFD700', '#32CD32', '#FF8C00'];
 
@@ -26,25 +26,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Actions
   initializeLevel: (levelNumber: number) => {
-    const levelData = generateLevel(levelNumber);
-    const grid: Tile[][] = levelData.grid.map((row, y) =>
-      row.map((isActive, x) => ({
-        x,
-        y,
-        isActive,
-        isStart: x === levelData.startPosition.x && y === levelData.startPosition.y,
-        visited: x === levelData.startPosition.x && y === levelData.startPosition.y, // Start tile is automatically visited
-      }))
-    );
-
-    // Completely reset all state for new level
+    // Generate level with increasing path length based on level number
+    const pathLength = Math.min(5 + levelNumber * 2, 20); // Start with 7 tiles, max 20
+    const levelData = generateLevel(pathLength);
+    
+    // The new generateLevel returns a complete GameState, so we can use it directly
+    // Just update the level number and ensure proper initialization
     set({
-      grid,
-      path: [],
-      isComplete: false,
+      ...levelData,
       level: levelNumber,
-      currentColor: COLORS[(levelNumber - 1) % COLORS.length],
-      isDragging: false,
+      path: [], // Reset path for new level
     });
   },
 
