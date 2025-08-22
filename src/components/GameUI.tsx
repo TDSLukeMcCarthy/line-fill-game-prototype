@@ -19,9 +19,9 @@ export default function GameUI({
   onCloseInstructions
 }: GameUIProps) {
   return (
-    <div className="fixed inset-0 pointer-events-none no-select">
+    <div className="fixed inset-0 pointer-events-none no-select" style={{ zIndex: 30 }}>
       {/* Top UI */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 pointer-events-auto" style={{ zIndex: 40 }}>
         <div className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-full shadow-2xl">
           <h1 className="text-2xl font-bold">Level {level}</h1>
         </div>
@@ -29,7 +29,7 @@ export default function GameUI({
 
       {/* Instructions overlay - shown only on first level */}
       {showInstructions && (
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center pointer-events-auto">
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center pointer-events-auto" style={{ zIndex: 50 }}>
           <div className="bg-gray-800 text-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 text-center">
             <h2 className="text-2xl font-bold mb-4">How to Play</h2>
             <div className="space-y-3 text-left">
@@ -51,7 +51,7 @@ export default function GameUI({
 
       {/* Victory overlay */}
       {isComplete && (
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center pointer-events-auto">
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center pointer-events-auto" style={{ zIndex: 50 }}>
           <div className="bg-gray-800 text-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 text-center">
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-3xl font-bold mb-4">Level Complete!</h2>
@@ -75,7 +75,7 @@ export default function GameUI({
       )}
 
       {/* Bottom controls */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-auto" style={{ zIndex: 40 }}>
         <div className="flex gap-3">
           <Link
             href="/"
