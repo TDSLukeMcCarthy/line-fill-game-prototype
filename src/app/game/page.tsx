@@ -8,6 +8,7 @@ import GameUI from '../../components/GameUI';
 export default function GamePage() {
   const {
     grid,
+    path,
     isComplete,
     currentColor,
     level,
@@ -87,6 +88,7 @@ export default function GamePage() {
       <div className="relative">
         <Grid
           grid={grid}
+          path={path}
           currentColor={currentColor}
           onMouseDown={handleMouseDown}
           onMouseEnter={handleMouseEnter}

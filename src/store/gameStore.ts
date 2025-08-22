@@ -37,6 +37,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       }))
     );
 
+    // Completely reset all state for new level
     set({
       grid,
       path: [],
@@ -85,7 +86,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     
     if (isSameTile) return; // Don't add the same tile twice
     if (tile.visited && !tile.isStart) return; // Don't revisit non-start tiles
-    if (!lastPathPoint || !isAdjacent(lastPathPoint, { x, y })) return;
+    if (!lastPathPoint || !isAdjacent(lastPathPoint, { x, y })) {
+      console.log('Path blocked:', { lastPathPoint, current: { x, y }, isAdjacent: lastPathPoint ? isAdjacent(lastPathPoint, { x, y }) : 'no last point' });
+      return;
+    }
 
     // Add to path and mark as visited
     const newPath = [...path, { x, y }];
@@ -94,6 +98,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       newGrid[y][x].visited = true;
     }
 
+    console.log('Path updated:', newPath);
     set({
       path: newPath,
       grid: newGrid,
@@ -128,6 +133,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   nextLevel: () => {
     const { level } = get();
+    // Ensure complete state reset before initializing new level
+    set({
+      grid: [],
+      path: [],
+      isComplete: false,
+      isDragging: false,
+    });
     get().initializeLevel(level + 1);
   },
 

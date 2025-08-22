@@ -66,3 +66,19 @@ body {
   -o-user-drag: none;
   user-drag: none;
 }
+
+/* Neon pulse animation for tiles */
+@keyframes pulseOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-out {
+  animation: pulseOut 2s ease-out forwards;
+}
