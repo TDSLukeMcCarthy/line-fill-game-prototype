@@ -26,11 +26,14 @@ export default function Grid({
 
   const cols = grid[0].length;
   const rows = grid.length;
+  
+  // Calculate tile size based on screen size (matching Tile component)
+  const tileSize = typeof window !== 'undefined' && window.innerWidth >= 768 ? 80 : 48; // w-20 = 80px, w-12 = 48px
 
   return (
     <div className="relative">
       <div 
-        className="inline-grid gap-1 p-4 bg-gray-800 rounded-lg shadow-2xl no-select"
+        className="inline-grid gap-1 p-4 bg-none rounded-lg  no-select"
         style={{
           gridTemplateColumns: `repeat(${cols}, 1fr)`,
           gridTemplateRows: `repeat(${rows}, 1fr)`,
@@ -54,7 +57,7 @@ export default function Grid({
       <PathLine
         path={path}
         currentColor={currentColor}
-        tileSize={48} // Base tile size (will be updated dynamically)
+        tileSize={tileSize}
         gap={4} // gap-1 = 4px
       />
     </div>

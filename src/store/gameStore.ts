@@ -49,27 +49,31 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   startDrag: (x: number, y: number) => {
-    const { grid } = get();
+    const { grid, path } = get();
     const tile = grid[y]?.[x];
     
     if (tile?.isStart) {
-      // Reset path and start new path from start tile
-      get().resetPath();
-      set({
-        isDragging: true,
-        path: [{ x, y }],
-      });
-    } else if (tile?.isActive && !tile.visited) {
-      // Start new path from non-start tile
-      set({
-        isDragging: true,
-        path: [{ x, y }],
-      });
-      
-      // Mark tile as visited
-      const newGrid = grid.map(row => [...row]);
-      newGrid[y][x].visited = true;
-      set({ grid: newGrid });
+      // Only allow starting from start tile if there's no path, or if clicking the start tile to reset
+      if (path.length === 0) {
+        // Start new path from start tile
+        set({
+          isDragging: true,
+          path: [{ x, y }],
+        });
+      } else {
+        // Reset path when clicking start tile again
+        get().resetPath();
+      }
+    } else if (tile?.isActive && !tile.visited && path.length > 0) {
+      // Only allow continuing from end of existing path
+      const lastPathPoint = path[path.length - 1];
+      if (lastPathPoint && isAdjacent(lastPathPoint, { x, y })) {
+        set({
+          isDragging: true,
+        });
+        // Continue the path
+        get().continuePath(x, y);
+      }
     }
   },
 
@@ -80,12 +84,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const tile = grid[y]?.[x];
     if (!tile?.isActive) return;
     
-    // Allow continuing to unvisited tiles, or to the same tile (for start tile case)
-    const lastPathPoint = path[path.length - 1];
-    const isSameTile = lastPathPoint && lastPathPoint.x === x && lastPathPoint.y === y;
+    // Don't allow revisiting the start tile
+    if (tile.isStart) return;
     
-    if (isSameTile) return; // Don't add the same tile twice
-    if (tile.visited && !tile.isStart) return; // Don't revisit non-start tiles
+    // Don't allow revisiting already visited tiles
+    if (tile.visited) return;
+    
+    const lastPathPoint = path[path.length - 1];
     if (!lastPathPoint || !isAdjacent(lastPathPoint, { x, y })) {
       console.log('Path blocked:', { lastPathPoint, current: { x, y }, isAdjacent: lastPathPoint ? isAdjacent(lastPathPoint, { x, y }) : 'no last point' });
       return;
@@ -94,9 +99,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Add to path and mark as visited
     const newPath = [...path, { x, y }];
     const newGrid = grid.map(row => [...row]);
-    if (!tile.visited) {
-      newGrid[y][x].visited = true;
-    }
+    newGrid[y][x].visited = true;
 
     console.log('Path updated:', newPath);
     set({

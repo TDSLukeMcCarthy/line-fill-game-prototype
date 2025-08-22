@@ -28,7 +28,7 @@ export default function Tile({
       setIsPulsing(true);
       
       // Stop pulsing after animation completes
-      const pulseTimer = setTimeout(() => setIsPulsing(false), 2000);
+      const pulseTimer = setTimeout(() => setIsPulsing(false), 600);
       return () => clearTimeout(pulseTimer);
     }
   }, [visited, isStart, isActive, isPulsing]);
@@ -50,35 +50,36 @@ export default function Tile({
   }
 
   const getTileStyle = () => {
-    const baseEmboss = 'inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(255,255,255,0.1)';
+    const baseEmboss = 'inset 0 4px 6px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(255,255,255,0.1), 0 4px 8px rgba(0, 0, 0, 0.3)';
     
     if (isStart) {
       return {
         backgroundColor: currentColor, // Start tile is always colored
-        border: '2px solid #F59E0B',
-        boxShadow: `${baseEmboss}, 0 0 20px rgba(59, 130, 246, 0.8)`, // Embossed + glowing
+        border: '0px solid #F59E0B',
+        boxShadow: `${baseEmboss}, 0 0 20px ${currentColor}40`, // Embossed + glowing with current color
       };
     }
     
     if (visited) {
-      const pulseScale = isPulsing ? 1.1 : 1;
-      const pulseGlow = isPulsing ? '0 0 25px rgba(59, 130, 246, 0.8)' : '0 0 10px rgba(59, 130, 246, 0.4)';
-      
       return {
         backgroundColor: currentColor,
-        border: '2px solid #1F2937',
-        boxShadow: `${baseEmboss}, ${pulseGlow}`,
-        transform: `scale(${pulseScale})`,
-        transition: 'transform 0.15s ease-out, box-shadow 0.15s ease-out',
+        border: '0px solid #1F2937',
+        boxShadow: baseEmboss,
+        transition: 'box-shadow 0.15s ease-out',
       };
     }
     
     return {
       backgroundColor: '#6B7280',
-      border: '2px solid #374151',
+      border: '0px solid #374151',
       boxShadow: baseEmboss, // Just embossed effect
     };
   };
+
+  // Determine if this tile can be interacted with
+  const canInteract = isStart || (isActive && !visited);
+  const cursorClass = canInteract ? 'cursor-pointer' : 'cursor-default';
+  const hoverClass = canInteract ? 'hover:scale-105' : '';
 
   const handleMouseDown = () => onMouseDown(x, y);
   const handleMouseEnter = () => onMouseEnter(x, y);
@@ -100,13 +101,30 @@ export default function Tile({
     }
   };
 
+  const getLineColor = (currentColor: string) => {
+    // Handle hex colors (with or without #)
+    const hex = currentColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Create a darker but still vibrant version by reducing brightness while maintaining saturation
+    const darkenFactor = 0.85; // Make it darker but not too dark
+    const newR = Math.max(0, Math.min(255, Math.round(r * darkenFactor)));
+    const newG = Math.max(0, Math.min(255, Math.round(g * darkenFactor)));
+    const newB = Math.max(0, Math.min(255, Math.round(b * darkenFactor)));
+    
+    return `rgb(${newR}, ${newG}, ${newB})`;
+  };
+
   return (
     <div
-      className="w-12 h-12 md:w-16 md:h-16 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:scale-105 no-select"
+      className={`w-12 h-12 md:w-20 md:h-20 border-2 rounded-xl transition-all duration-200 ${hoverClass} no-select ${cursorClass} ${isPulsing ? 'animate-tile-pulse' : ''} ${visited ? 'tile-visited' : ''} relative`}
       style={{
         ...getTileStyle(),
         gridColumn: x + 1,
         gridRow: y + 1,
+        ...(visited && { '--tile-glow-color': `${currentColor}40` }),
       }}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
@@ -114,20 +132,16 @@ export default function Tile({
       onTouchMove={handleTouchMove}
       onTouchEnd={(e) => e.preventDefault()}
     >
-      {isPulsing && isActive && visited && (
-        <>
-          <div className="absolute inset-0 border-2 rounded-xl animate-pulse-out opacity-0" 
-               style={{ 
-                 borderColor: currentColor,
-                 boxShadow: `0 0 10px ${currentColor}40`
-               }} />
-          <div className="absolute inset-0 border-2 rounded-xl animate-pulse-out opacity-0" 
-               style={{ 
-                 borderColor: currentColor,
-                 boxShadow: `0 0 10px ${currentColor}40`,
-                 animationDelay: '1s'
-               }} />
-        </>
+      {isStart && (
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          style={{ zIndex: 20 }}
+        >
+          <div 
+            className="w-3 h-3 md:w-10 md:h-10 bg-white border-4 rounded-full"
+            style={{ borderColor: getLineColor(currentColor) }}
+          ></div>
+        </div>
       )}
     </div>
   );

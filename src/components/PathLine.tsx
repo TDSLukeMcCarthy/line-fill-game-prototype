@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Coord } from '../types/game';
 
 interface PathLineProps {
@@ -9,24 +9,6 @@ interface PathLineProps {
 }
 
 export default function PathLine({ path, currentColor, tileSize, gap }: PathLineProps) {
-  const [actualTileSize, setActualTileSize] = useState(tileSize);
-  const [actualGap, setActualGap] = useState(gap);
-
-  // Update tile size based on screen size
-  useEffect(() => {
-    const updateTileSize = () => {
-      if (window.innerWidth >= 768) { // md breakpoint
-        setActualTileSize(64); // w-16 = 64px
-      } else {
-        setActualTileSize(48); // w-12 = 48px
-      }
-    };
-
-    updateTileSize();
-    window.addEventListener('resize', updateTileSize);
-    return () => window.removeEventListener('resize', updateTileSize);
-  }, []);
-
   if (path.length < 2) return null;
 
   // Function to create a vibrant dark version of the color for the line
@@ -56,15 +38,15 @@ export default function PathLine({ path, currentColor, tileSize, gap }: PathLine
     
     // Start with the first point
     const firstPoint = path[0];
-    const x1 = gridPadding + firstPoint.x * (actualTileSize + actualGap) + actualTileSize / 2;
-    const y1 = gridPadding + firstPoint.y * (actualTileSize + actualGap) + actualTileSize / 2;
+    const x1 = gridPadding + firstPoint.x * (tileSize + gap) + tileSize / 2;
+    const y1 = gridPadding + firstPoint.y * (tileSize + gap) + tileSize / 2;
     pathData.push(`M ${x1} ${y1}`);
     
     // Add lines to all subsequent points
     for (let i = 1; i < path.length; i++) {
       const current = path[i];
-      const x = gridPadding + current.x * (actualTileSize + actualGap) + actualTileSize / 2;
-      const y = gridPadding + current.y * (actualTileSize + actualGap) + actualTileSize / 2;
+      const x = gridPadding + current.x * (tileSize + gap) + tileSize / 2;
+      const y = gridPadding + current.y * (tileSize + gap) + tileSize / 2;
       pathData.push(`L ${x} ${y}`);
     }
     

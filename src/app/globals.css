@@ -67,18 +67,27 @@ body {
   user-drag: none;
 }
 
-/* Neon pulse animation for tiles */
-@keyframes pulseOut {
+
+
+/* Tile scale pulse animation - scales up then back down */
+@keyframes tilePulse {
   0% {
     transform: scale(1);
-    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
   }
   100% {
-    transform: scale(1.5);
-    opacity: 0;
+    transform: scale(1);
   }
 }
 
-.animate-pulse-out {
-  animation: pulseOut 2s ease-out forwards;
+.animate-tile-pulse {
+  animation: tilePulse 0.6s ease-in-out;
 }
+
+/* Subtle glow effect for visited tiles */
+.tile-visited {
+  box-shadow: 0 0 8px var(--tile-glow-color, rgba(59, 130, 246, 0.3));
+}
+

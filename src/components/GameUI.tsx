@@ -34,7 +34,8 @@ export default function GameUI({
             <h2 className="text-2xl font-bold mb-4">How to Play</h2>
             <div className="space-y-3 text-left">
               <p>• <span className="text-yellow-400">Start from the colored tile</span> (already lit up)</p>
-              <p>• <span className="text-blue-400">Drag through adjacent tiles</span> to fill them</p>
+              <p>• <span className="text-blue-400">Drag from the end of your line</span> through adjacent tiles</p>
+              <p>• <span className="text-red-400">You cannot click squares</span> to highlight them</p>
               <p>• <span className="text-green-400">Cover all tiles</span> to complete the level</p>
               <p>• <span className="text-orange-400">Tap the start tile again</span> to reset</p>
             </div>
