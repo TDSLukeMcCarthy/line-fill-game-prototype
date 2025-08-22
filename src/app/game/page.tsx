@@ -65,6 +65,11 @@ export default function GamePage() {
     setShowInstructions(false);
   };
 
+  const handleCloseInstructions = () => {
+    setShowInstructions(false);
+    setHasInteracted(true);
+  };
+
   const handleMouseUp = () => {
     endDrag();
   };
@@ -75,7 +80,7 @@ export default function GamePage() {
 
   return (
     <div 
-      className="min-h-screen bg-black flex items-center justify-center p-4"
+      className="min-h-screen bg-black flex items-center justify-center p-4 no-select"
       onMouseUp={handleMouseUp}
       onTouchEnd={handleTouchEnd}
     >
@@ -95,6 +100,7 @@ export default function GamePage() {
           onRestart={handleRestart}
           onNextLevel={handleNextLevel}
           showInstructions={showInstructions}
+          onCloseInstructions={handleCloseInstructions}
         />
       </div>
     </div>

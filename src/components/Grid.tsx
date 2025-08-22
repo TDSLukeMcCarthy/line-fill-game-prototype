@@ -26,7 +26,7 @@ export default function Grid({
 
   return (
     <div 
-      className="inline-grid gap-1 p-4 bg-gray-800 rounded-lg shadow-2xl"
+      className="inline-grid gap-1 p-4 bg-gray-800 rounded-lg shadow-2xl no-select"
       style={{
         gridTemplateColumns: `repeat(${cols}, 1fr)`,
         gridTemplateRows: `repeat(${rows}, 1fr)`,

@@ -32,9 +32,9 @@ export default function Tile({
   const getTileStyle = () => {
     if (isStart) {
       return {
-        backgroundColor: visited ? currentColor : '#4B5563',
+        backgroundColor: currentColor, // Start tile is always colored
         border: '2px solid #F59E0B',
-        boxShadow: visited ? '0 0 20px rgba(59, 130, 246, 0.8)' : '0 0 15px rgba(245, 158, 11, 0.6)',
+        boxShadow: '0 0 20px rgba(59, 130, 246, 0.8)', // Always glowing
       };
     }
     
@@ -74,7 +74,7 @@ export default function Tile({
 
   return (
     <div
-      className="w-12 h-12 md:w-16 md:h-16 border-2 rounded-sm cursor-pointer transition-all duration-200 hover:scale-105"
+      className="w-12 h-12 md:w-16 md:h-16 border-2 rounded-sm cursor-pointer transition-all duration-200 hover:scale-105 no-select"
       style={{
         ...getTileStyle(),
         gridColumn: x + 1,
@@ -86,11 +86,6 @@ export default function Tile({
       onTouchMove={handleTouchMove}
       onTouchEnd={(e) => e.preventDefault()}
     >
-      {isStart && !visited && (
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="text-xs font-bold text-white">GO!</span>
-        </div>
-      )}
     </div>
   );
 }

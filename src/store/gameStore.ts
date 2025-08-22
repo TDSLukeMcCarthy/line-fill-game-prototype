@@ -33,7 +33,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         y,
         isActive,
         isStart: x === levelData.startPosition.x && y === levelData.startPosition.y,
-        visited: false,
+        visited: x === levelData.startPosition.x && y === levelData.startPosition.y, // Start tile is automatically visited
       }))
     );
 
@@ -52,10 +52,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const tile = grid[y]?.[x];
     
     if (tile?.isStart) {
-      // Reset path if starting from start tile
+      // Reset path and start new path from start tile
       get().resetPath();
+      set({
+        isDragging: true,
+        path: [{ x, y }],
+      });
     } else if (tile?.isActive && !tile.visited) {
-      // Start new path
+      // Start new path from non-start tile
       set({
         isDragging: true,
         path: [{ x, y }],
@@ -73,15 +77,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!isDragging) return;
 
     const tile = grid[y]?.[x];
-    if (!tile?.isActive || tile.visited) return;
-
+    if (!tile?.isActive) return;
+    
+    // Allow continuing to unvisited tiles, or to the same tile (for start tile case)
     const lastPathPoint = path[path.length - 1];
+    const isSameTile = lastPathPoint && lastPathPoint.x === x && lastPathPoint.y === y;
+    
+    if (isSameTile) return; // Don't add the same tile twice
+    if (tile.visited && !tile.isStart) return; // Don't revisit non-start tiles
     if (!lastPathPoint || !isAdjacent(lastPathPoint, { x, y })) return;
 
     // Add to path and mark as visited
     const newPath = [...path, { x, y }];
     const newGrid = grid.map(row => [...row]);
-    newGrid[y][x].visited = true;
+    if (!tile.visited) {
+      newGrid[y][x].visited = true;
+    }
 
     set({
       path: newPath,
@@ -101,7 +112,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   resetPath: () => {
     const { grid } = get();
     const newGrid = grid.map(row =>
-      row.map(tile => ({ ...tile, visited: false }))
+      row.map(tile => ({ 
+        ...tile, 
+        visited: tile.isStart // Keep start tile visited, clear others
+      }))
     );
     
     set({

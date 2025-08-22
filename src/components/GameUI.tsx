@@ -7,6 +7,7 @@ interface GameUIProps {
   onRestart: () => void;
   onNextLevel: () => void;
   showInstructions: boolean;
+  onCloseInstructions: () => void;
 }
 
 export default function GameUI({ 
@@ -14,10 +15,11 @@ export default function GameUI({
   isComplete, 
   onRestart, 
   onNextLevel, 
-  showInstructions 
+  showInstructions,
+  onCloseInstructions
 }: GameUIProps) {
   return (
-    <div className="fixed inset-0 pointer-events-none">
+    <div className="fixed inset-0 pointer-events-none no-select">
       {/* Top UI */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
         <div className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-full shadow-2xl">
@@ -31,13 +33,13 @@ export default function GameUI({
           <div className="bg-gray-800 text-white p-8 rounded-2xl shadow-2xl max-w-md mx-4 text-center">
             <h2 className="text-2xl font-bold mb-4">How to Play</h2>
             <div className="space-y-3 text-left">
-              <p>• <span className="text-yellow-400">Tap the start tile</span> to begin</p>
+              <p>• <span className="text-yellow-400">Start from the colored tile</span> (already lit up)</p>
               <p>• <span className="text-blue-400">Drag through adjacent tiles</span> to fill them</p>
               <p>• <span className="text-green-400">Cover all tiles</span> to complete the level</p>
-              <p>• <span className="text-orange-400">Tap start tile again</span> to reset</p>
+              <p>• <span className="text-orange-400">Tap the start tile again</span> to reset</p>
             </div>
             <button
-              onClick={() => window.location.reload()}
+              onClick={onCloseInstructions}
               className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors"
             >
               Got it!
