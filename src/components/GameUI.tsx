@@ -4,17 +4,21 @@ import Link from 'next/link';
 interface GameUIProps {
   level: number;
   isComplete: boolean;
+  showDebug: boolean;
   onRestart: () => void;
   onNextLevel: () => void;
+  onToggleDebug: () => void;
   showInstructions: boolean;
   onCloseInstructions: () => void;
 }
 
 export default function GameUI({ 
   level, 
-  isComplete, 
+  isComplete,
+  showDebug,
   onRestart, 
-  onNextLevel, 
+  onNextLevel,
+  onToggleDebug,
   showInstructions,
   onCloseInstructions
 }: GameUIProps) {
@@ -25,6 +29,20 @@ export default function GameUI({
         <div className="bg-black/80 backdrop-blur-sm text-white px-6 py-3 rounded-full shadow-2xl">
           <h1 className="text-2xl font-bold">Level {level}</h1>
         </div>
+      </div>
+
+      {/* Debug Toggle */}
+      <div className="absolute top-4 right-4 pointer-events-auto" style={{ zIndex: 40 }}>
+        <button
+          onClick={onToggleDebug}
+          className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-2xl ${
+            showDebug 
+              ? 'bg-red-600 hover:bg-red-700 text-white' 
+              : 'bg-gray-600 hover:bg-gray-700 text-white'
+          }`}
+        >
+          {showDebug ? 'Hide Debug' : 'Show Debug'}
+        </button>
       </div>
 
       {/* Instructions overlay - shown only on first level */}

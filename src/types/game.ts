@@ -13,6 +13,7 @@ export interface GameState {
   currentColor: string;
   level: number;
   isDragging: boolean;
+  winningPath?: Coord[]; // Optional winning path for debug purposes
 }
 
 export interface Coord {

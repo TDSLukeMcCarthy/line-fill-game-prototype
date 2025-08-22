@@ -2,11 +2,14 @@ import React from 'react';
 import { Tile as TileType } from '../types/game';
 import Tile from './Tile';
 import PathLine from './PathLine';
+import DebugPath from './DebugPath';
 
 interface GridProps {
   grid: TileType[][];
   path: { x: number; y: number }[];
   currentColor: string;
+  winningPath?: { x: number; y: number }[];
+  showDebug: boolean;
   onMouseDown: (x: number, y: number) => void;
   onMouseEnter: (x: number, y: number) => void;
   onTouchStart: (x: number, y: number) => void;
@@ -16,7 +19,9 @@ interface GridProps {
 export default function Grid({ 
   grid, 
   path,
-  currentColor, 
+  currentColor,
+  winningPath,
+  showDebug,
   onMouseDown, 
   onMouseEnter, 
   onTouchStart, 
@@ -60,6 +65,15 @@ export default function Grid({
         tileSize={tileSize}
         gap={4} // gap-1 = 4px
       />
+      
+      {/* Debug path overlay */}
+      {showDebug && winningPath && (
+        <DebugPath
+          winningPath={winningPath}
+          tileSize={tileSize}
+          gap={4}
+        />
+      )}
     </div>
   );
 }

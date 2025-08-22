@@ -5,6 +5,9 @@ import { generateLevel, isAdjacent } from '../lib/levels/generator';
 const COLORS = ['#00BFFF', '#FF69B4', '#FFD700', '#32CD32', '#FF8C00'];
 
 interface GameStore extends GameState {
+  // Debug state
+  showDebug: boolean;
+  
   // Actions
   initializeLevel: (levelNumber: number) => void;
   startDrag: (x: number, y: number) => void;
@@ -13,6 +16,7 @@ interface GameStore extends GameState {
   resetPath: () => void;
   nextLevel: () => void;
   checkVictory: () => boolean;
+  toggleDebug: () => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -23,6 +27,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   currentColor: COLORS[0],
   level: 1,
   isDragging: false,
+  showDebug: false,
 
   // Actions
   initializeLevel: (levelNumber: number) => {
@@ -36,6 +41,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       ...levelData,
       level: levelNumber,
       path: [], // Reset path for new level
+      showDebug: false, // Reset debug state for new level
     });
   },
 
@@ -142,5 +148,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return grid.every(row => 
       row.every(tile => !tile.isActive || tile.visited)
     );
+  },
+
+  toggleDebug: () => {
+    set(state => ({ showDebug: !state.showDebug }));
   },
 }));

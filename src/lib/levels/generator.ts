@@ -8,115 +8,61 @@ export function isAdjacent(a: Coord, b: Coord): boolean {
   return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
 }
 
-export function generateLevel(pathLength: number, maxGridSize: number = 10): GameState {
-  // Start from an empty maxGridSize x maxGridSize virtual grid
-  const virtualGrid: boolean[][] = Array(maxGridSize).fill(null).map(() => Array(maxGridSize).fill(false));
-  
-  // Generate a solvable path using a proper algorithm
+export function generateLevel(pathLength: number): GameState {
+  // Simple approach: just walk randomly to create a path
   const path: Coord[] = [];
+  const gridSize = Math.max(6, Math.ceil(Math.sqrt(pathLength * 1.2)));
   
-  // Start from a random position
-  const startX = Math.floor(Math.random() * maxGridSize);
-  const startY = Math.floor(Math.random() * maxGridSize);
+  // Start from center
+  const startX = Math.floor(gridSize / 2);
+  const startY = Math.floor(gridSize / 2);
   
-  // Add starting position
   path.push({ x: startX, y: startY });
-  virtualGrid[startY][startX] = true;
-  
-  // Use a depth-first search approach to ensure the path is always solvable
-  const stack: Coord[] = [{ x: startX, y: startY }];
   const visited = new Set<string>();
   visited.add(`${startX},${startY}`);
   
-  const directions = [
-    { dx: 0, dy: -1 }, // up
-    { dx: 0, dy: 1 },  // down
-    { dx: -1, dy: 0 }, // left
-    { dx: 1, dy: 0 }   // right
-  ];
-  
-  while (path.length < pathLength && stack.length > 0) {
-    const current = stack[stack.length - 1];
+  // Simple random walk algorithm - ONLY extend from current endpoint
+  while (path.length < pathLength) {
+    const current = path[path.length - 1]; // Always work from the END of the path
     
-    // Find available unvisited adjacent cells
-    const availableDirections = directions
-      .map(dir => ({ x: current.x + dir.dx, y: current.y + dir.dy }))
-      .filter(pos => 
-        pos.x >= 0 && pos.x < maxGridSize && 
-        pos.y >= 0 && pos.y < maxGridSize && 
-        !visited.has(`${pos.x},${pos.y}`)
-      );
+    // Try to find any adjacent unvisited tile from current position
+    const directions = [
+      { dx: 0, dy: -1 }, // up
+      { dx: 0, dy: 1 },  // down
+      { dx: -1, dy: 0 }, // left
+      { dx: 1, dy: 0 }   // right
+    ];
     
-    if (availableDirections.length > 0) {
-      // Choose a random available direction
-      const nextPos = availableDirections[Math.floor(Math.random() * availableDirections.length)];
-      
-      // Add to path and mark as visited
-      path.push(nextPos);
-      virtualGrid[nextPos.y][nextPos.x] = true;
-      visited.add(`${nextPos.x},${nextPos.y}`);
-      stack.push(nextPos);
-    } else {
-      // Backtrack if no available directions
-      stack.pop();
-    }
-  }
-  
-  // If we couldn't reach the desired path length, try to extend from existing points
-  if (path.length < pathLength) {
-    let attempts = 0;
-    const maxAttempts = 100;
+    // Shuffle directions for randomness
+    const shuffledDirections = directions.sort(() => Math.random() - 0.5);
     
-    while (path.length < pathLength && attempts < maxAttempts) {
-      attempts++;
+    let found = false;
+    
+    // Try each direction from current position
+    for (const dir of shuffledDirections) {
+      const nextPos = { x: current.x + dir.dx, y: current.y + dir.dy };
       
-      // Find a random point in the path that has available adjacent cells
-      const pathPoints = [...path];
-      const shuffledPoints = pathPoints.sort(() => Math.random() - 0.5);
-      
-      for (const point of shuffledPoints) {
-        const availableDirections = directions
-          .map(dir => ({ x: point.x + dir.dx, y: point.y + dir.dy }))
-          .filter(pos => 
-            pos.x >= 0 && pos.x < maxGridSize && 
-            pos.y >= 0 && pos.y < maxGridSize && 
-            !visited.has(`${pos.x},${pos.y}`)
-          );
+      if (nextPos.x >= 0 && nextPos.x < gridSize && 
+          nextPos.y >= 0 && nextPos.y < gridSize && 
+          !visited.has(`${nextPos.x},${nextPos.y}`)) {
         
-        if (availableDirections.length > 0) {
-          const nextPos = availableDirections[Math.floor(Math.random() * availableDirections.length)];
-          path.push(nextPos);
-          virtualGrid[nextPos.y][nextPos.x] = true;
-          visited.add(`${nextPos.x},${nextPos.y}`);
-          break;
-        }
+        path.push(nextPos);
+        visited.add(`${nextPos.x},${nextPos.y}`);
+        found = true;
+        break;
       }
-      
-      if (attempts > maxAttempts / 2) {
-        // If we're having trouble, reduce the target path length
-        pathLength = Math.min(pathLength, path.length + 2);
-      }
+    }
+    
+    // If we can't extend from current position, we're done
+    // NO branching, NO connecting from other points - just stop
+    if (!found) {
+      break;
     }
   }
   
-  // Calculate bounding box of the path
-  const minX = Math.min(...path.map(p => p.x));
-  const maxX = Math.max(...path.map(p => p.x));
-  const minY = Math.min(...path.map(p => p.y));
-  const maxY = Math.max(...path.map(p => p.y));
-  
-  // Normalize coordinates so shape starts from (0, 0)
-  const normalizedPath = path.map(p => ({
-    x: p.x - minX,
-    y: p.y - minY
-  }));
-  
-  // Build the actual grid with only the path tiles
-  const gridWidth = maxX - minX + 1;
-  const gridHeight = maxY - minY + 1;
-  
-  const grid: Tile[][] = Array(gridHeight).fill(null).map(() => 
-    Array(gridWidth).fill(null).map(() => ({
+  // Build the grid
+  const grid: Tile[][] = Array(gridSize).fill(null).map(() => 
+    Array(gridSize).fill(null).map(() => ({
       x: 0,
       y: 0,
       isActive: false,
@@ -126,7 +72,7 @@ export function generateLevel(pathLength: number, maxGridSize: number = 10): Gam
   );
   
   // Mark path tiles as active
-  normalizedPath.forEach((p) => {
+  path.forEach((p) => {
     grid[p.y][p.x] = {
       x: p.x,
       y: p.y,
@@ -136,12 +82,12 @@ export function generateLevel(pathLength: number, maxGridSize: number = 10): Gam
     };
   });
   
-  // Mark the first tile as start (guaranteed to be solvable from here)
-  const startTile = normalizedPath[0];
+  // Mark start tile
+  const startTile = path[0];
   grid[startTile.y][startTile.x].isStart = true;
   grid[startTile.y][startTile.x].visited = true;
   
-  // Choose a random color
+  // Choose random color
   const currentColor = COLORS[Math.floor(Math.random() * COLORS.length)];
   
   return {
@@ -150,6 +96,7 @@ export function generateLevel(pathLength: number, maxGridSize: number = 10): Gam
     isComplete: false,
     currentColor,
     level: 1,
-    isDragging: false
+    isDragging: false,
+    winningPath: path
   };
 }

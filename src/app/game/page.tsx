@@ -13,12 +13,15 @@ export default function GamePage() {
     currentColor,
     level,
     isDragging,
+    winningPath,
+    showDebug,
     initializeLevel,
     startDrag,
     continuePath,
     endDrag,
     resetPath,
     nextLevel,
+    toggleDebug,
   } = useGameStore();
 
   const [showInstructions, setShowInstructions] = useState(true);
@@ -90,6 +93,8 @@ export default function GamePage() {
           grid={grid}
           path={path}
           currentColor={currentColor}
+          winningPath={winningPath}
+          showDebug={showDebug}
           onMouseDown={handleMouseDown}
           onMouseEnter={handleMouseEnter}
           onTouchStart={handleTouchStart}
@@ -99,8 +104,10 @@ export default function GamePage() {
         <GameUI
           level={level}
           isComplete={isComplete}
+          showDebug={showDebug}
           onRestart={handleRestart}
           onNextLevel={handleNextLevel}
+          onToggleDebug={toggleDebug}
           showInstructions={showInstructions}
           onCloseInstructions={handleCloseInstructions}
         />
