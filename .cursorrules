@@ -1,0 +1,139 @@
+# Game Prototype Starter - Cursor Rules
+
+## 🎯 Core Project Structure
+
+This project follows a simplified, focused structure designed for single-game prototyping. Maintain this structure when making changes.
+
+### 📁 Required Directory Structure
+```
+src/
+├── app/                    # Next.js App Router (REQUIRED)
+│   ├── game/              # Game page (REQUIRED)
+│   │   └── page.tsx       # Main game interface
+│   ├── layout.tsx         # Root layout (REQUIRED)
+│   ├── page.tsx           # Homepage with single Play button (REQUIRED)
+│   ├── globals.css        # Global styles (REQUIRED)
+│   └── favicon.ico        # Favicon (REQUIRED)
+├── components/             # React components (OPTIONAL - add as needed)
+├── lib/                    # Utilities and game logic (OPTIONAL - add as needed)
+├── store/                  # State management (OPTIONAL - add as needed)
+└── types/                  # TypeScript definitions (OPTIONAL - add as needed)
+```
+
+## 🚫 What NOT to Change
+
+### Core Files (Never Delete or Rename)
+- `src/app/layout.tsx` - Root layout
+- `src/app/page.tsx` - Homepage
+- `src/app/game/page.tsx` - Game page
+- `src/app/globals.css` - Global styles
+- `next.config.ts` - Next.js configuration
+- `tsconfig.json` - TypeScript configuration
+- `package.json` - Dependencies and scripts
+
+### Core Structure (Maintain Always)
+- **Single Homepage**: Keep only one "Play Game →" button
+- **Single Game Route**: Maintain `/game` as the only game route
+- **Simple Navigation**: Home → Game → Home (no complex routing)
+- **No Multiple Game Modes**: This is a single-game prototype starter
+
+## ✅ What You CAN Change
+
+### Game Implementation
+- **Replace placeholder content** in `src/app/game/page.tsx`
+- **Add game components** in `src/components/`
+- **Add game logic** in `src/lib/`
+- **Add state management** in `src/store/`
+- **Add TypeScript types** in `src/types/`
+
+### UI/UX
+- **Customize colors** and styling
+- **Change game title** and description
+- **Modify homepage text** to match your game
+- **Add animations** and visual effects
+
+### Game Mechanics
+- **Implement your game logic**
+- **Add scoring systems**
+- **Create game states**
+- **Add user interactions**
+
+## 🔧 Development Guidelines
+
+### When Adding New Features
+1. **Keep it simple** - Start with basic functionality
+2. **Maintain single-game focus** - Don't add multiple game modes
+3. **Use existing structure** - Extend, don't replace
+4. **Test navigation flow** - Ensure Home → Game → Home works
+
+### When Creating Components
+1. **Place in appropriate directories**:
+   - Game UI: `src/components/game/`
+   - Shared UI: `src/components/ui/`
+   - Game logic: `src/lib/`
+2. **Use TypeScript** for type safety
+3. **Follow React best practices**
+
+### When Managing State
+1. **Use Zustand** for simple state management
+2. **Keep state centralized** in `src/store/`
+3. **Avoid complex state hierarchies**
+4. **Use React hooks** appropriately
+
+## 📱 Responsive Design
+
+- **Maintain mobile-first approach**
+- **Test on different screen sizes**
+- **Ensure touch-friendly interactions**
+- **Keep UI elements appropriately sized**
+
+## 🚀 Performance Guidelines
+
+- **Use Next.js optimizations** (Image, Link, etc.)
+- **Implement proper loading states**
+- **Optimize game loops** if using canvas/animations
+- **Lazy load** heavy components when possible
+
+## 🧪 Testing Requirements
+
+- **Test navigation flow** after any changes
+- **Verify build process** works (`npm run build`)
+- **Check development server** starts (`npm run dev`)
+- **Test responsive design** on different devices
+
+## 📝 Code Style
+
+- **Use TypeScript** for all new files
+- **Follow existing naming conventions**
+- **Use Tailwind CSS** for styling
+- **Keep components focused** and single-purpose
+- **Add JSDoc comments** for complex functions
+
+## 🔄 Workflow for New Games
+
+1. **Copy this entire project** to a new directory
+2. **Rename project** in `package.json`
+3. **Replace placeholder content** in game page
+4. **Add your game components** and logic
+5. **Customize homepage** to match your game
+6. **Test and iterate**
+
+## ⚠️ Common Pitfalls to Avoid
+
+- **Don't add multiple game routes** (keep it simple)
+- **Don't create complex navigation** (Home → Game → Home only)
+- **Don't delete core files** (layout, page, game page)
+- **Don't over-engineer** (start simple, add complexity as needed)
+- **Don't break the build** (test `npm run build` after changes)
+
+## 🎮 Game Development Best Practices
+
+- **Start with a simple prototype**
+- **Test core mechanics first**
+- **Add polish incrementally**
+- **Keep performance in mind**
+- **Document your game logic**
+
+---
+
+**Remember**: This is a starter kit designed for rapid prototyping. Keep it simple, focused, and maintainable. The goal is to get you building games quickly, not managing complex project structures.
