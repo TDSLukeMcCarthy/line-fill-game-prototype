@@ -35,7 +35,22 @@ export const useGameStore = create<GameStore>((set, get) => ({
   isDragging: false,
   showDebug: false,
   portals: [],
-  userPreferences: { ...defaultUserPreferences },
+  userPreferences: (() => {
+    // Try to read from localStorage, fallback to defaults
+    if (typeof window !== 'undefined') {
+      try {
+        const storedPortals = localStorage.getItem('portalsEnabled');
+        const storedDebug = localStorage.getItem('showDebug');
+        return {
+          portalsEnabled: storedPortals ? storedPortals === 'true' : defaultUserPreferences.portalsEnabled,
+          showDebug: storedDebug ? storedDebug === 'true' : false
+        };
+      } catch (e) {
+        console.warn('Failed to read user preferences from localStorage:', e);
+      }
+    }
+    return { ...defaultUserPreferences };
+  })(),
 
   // Actions
   initializeLevel: (levelNumber: number) => {
@@ -193,15 +208,37 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   toggleDebug: () => {
-    set(state => ({ showDebug: !state.showDebug }));
+    set(state => {
+      const newShowDebug = !state.showDebug;
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('showDebug', newShowDebug.toString());
+        } catch (e) {
+          console.warn('Failed to save debug preference to localStorage:', e);
+        }
+      }
+      return { showDebug: newShowDebug };
+    });
   },
 
   togglePortals: () => {
-    set(state => ({
-      userPreferences: {
-        ...state.userPreferences,
-        portalsEnabled: !state.userPreferences.portalsEnabled
+    set(state => {
+      const newPortalsEnabled = !state.userPreferences.portalsEnabled;
+      // Save to localStorage
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('portalsEnabled', newPortalsEnabled.toString());
+        } catch (e) {
+          console.warn('Failed to save portal preference to localStorage:', e);
+        }
       }
-    }));
+      return {
+        userPreferences: {
+          ...state.userPreferences,
+          portalsEnabled: newPortalsEnabled
+        }
+      };
+    });
   },
 }));

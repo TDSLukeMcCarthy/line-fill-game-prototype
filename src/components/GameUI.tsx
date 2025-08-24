@@ -10,10 +10,6 @@ interface GameUIProps {
   portals?: Portal[];
   onRestart: () => void;
   onNextLevel: () => void;
-  onToggleDebug: () => void;
-  onToggleLevelEditor: () => void;
-  onTogglePortals: () => void;
-  showLevelEditor: boolean;
   showInstructions: boolean;
   onCloseInstructions: () => void;
   portalsEnabled: boolean;
@@ -26,10 +22,6 @@ export default function GameUI({
   portals = [],
   onRestart, 
   onNextLevel,
-  onToggleDebug,
-  onToggleLevelEditor,
-  onTogglePortals,
-  showLevelEditor,
   showInstructions,
   onCloseInstructions,
   portalsEnabled
@@ -48,44 +40,13 @@ export default function GameUI({
         </div>
       </div>
 
-      {/* Debug Toggle */}
+      {/* Game Status Info - Mobile Optimized */}
       <div className="absolute top-4 right-4 pointer-events-auto" style={{ zIndex: 40 }}>
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={onToggleDebug}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-2xl ${
-              showDebug 
-                ? 'bg-red-600 hover:bg-red-700 text-white' 
-                : 'bg-gray-600 hover:bg-gray-700 text-white'
-            }`}
-          >
-            {showDebug ? 'Hide Debug' : 'Show Debug'}
-          </button>
-          
-          {gameFeatures.portalsEnabled && (
-            <>
-              <button
-                onClick={onTogglePortals}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-2xl ${
-                  portalsEnabled 
-                    ? 'bg-green-600 hover:bg-green-700 text-white' 
-                    : 'bg-gray-500 hover:bg-gray-600 text-white'
-                }`}
-              >
-                {portalsEnabled ? '🌀 Portals ON' : '🌀 Portals OFF'}
-              </button>
-              
-              <button
-                onClick={onToggleLevelEditor}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-2xl ${
-                  showLevelEditor 
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
-              >
-                {showLevelEditor ? 'Hide Editor' : 'Level Editor'}
-              </button>
-            </>
+        <div className="bg-black/80 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm">
+          {gameFeatures.portalsEnabled && portalsEnabled && portals.length > 0 && (
+            <div className="text-blue-400">
+              🌀 {portals.length} Portal{portals.length !== 1 ? 's' : ''}
+            </div>
           )}
         </div>
       </div>
@@ -99,7 +60,7 @@ export default function GameUI({
               <p>• <span className="text-yellow-400">Start from the colored tile</span> (already lit up)</p>
               <p>• <span className="text-blue-400">Drag from the end of your line</span> through adjacent tiles</p>
               {gameFeatures.portalsEnabled && (
-                <p>• <span className="text-blue-400">🌀 Toggle portals ON/OFF</span> using the button in top-right</p>
+                <p>• <span className="text-blue-400">🌀 Toggle portals ON/OFF</span> from the main menu before starting</p>
               )}
               {gameFeatures.portalsEnabled && (
                 <p>• <span className="text-blue-400">🌀 Blue tiles are portal entrances</span> - teleport to green exits ✨</p>
